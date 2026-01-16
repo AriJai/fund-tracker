@@ -8,7 +8,7 @@ function HomePage() {
         navigate('/login');
     };
     const handleSignUpClick = (): void => {
-        navigate('/');
+        navigate('/register');
     };
 
     return (

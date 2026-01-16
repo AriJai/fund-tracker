@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
+import styles from './RegistrationPage.module.scss';
 
-function LoginPage() {
+function RegistrationPage() {
     // setup navigation
     const navigate = useNavigate();
     // Navigation to other pages
@@ -10,15 +11,15 @@ function LoginPage() {
 
     return (
         <div>
-            <h1>Login</h1>
-            <form className="login-form">
-                <input type="email" placeholder="Email" required />
+            <h1>Register</h1>
+            <form className={styles.registrationForm}>
+                <input type="text" placeholder="Username" required />
                 <input type="password" placeholder="Password" required />
-                <button type="submit">Sign In</button>
+                <input type="submit" value="Sign Up" />
             </form>
             <button onClick={handleHomePageClick}>Go Back</button>
         </div>
     );
 }
 
-export default LoginPage;
+export default RegistrationPage;

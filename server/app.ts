@@ -1,7 +1,10 @@
-import express, { Request, Response } from "express";
+import express, { Application, Request, Response } from "express";
 import client from './db';
 
-export const app = express();
+export const app: Application = express();
+
+// Used for parsing JSON
+app.use(express.json());
 
 // Used for testing: index.test.ts
 app.get("/", (req: Request, res: Response) => {
