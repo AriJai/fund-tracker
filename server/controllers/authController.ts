@@ -12,7 +12,6 @@ import hashPassword from '../utils/hashPassword';
 
 const register = async (req: Request, res: Response): Promise<void> => {
     const { username, password } = req.body;
-
     // Check for missing Username and Password
     if (!username || !password) {
         res.status(400).json({ message: 'Both Username and password are required' });

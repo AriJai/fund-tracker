@@ -1,10 +1,16 @@
 import express, { Application, Request, Response } from "express";
 import client from './db';
-
+import cors from 'cors';
 export const app: Application = express();
+// Route Imports
+import authRoutes from './routes/authRoutes';
 
-// Used for parsing JSON
+// Middleware
+app.use(cors({ origin:['http://localhost:5173'] }));
 app.use(express.json());
+
+// Register Routes
+app.use('/api/auth', authRoutes);
 
 // Used for testing: index.test.ts
 app.get("/", (req: Request, res: Response) => {

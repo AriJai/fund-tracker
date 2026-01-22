@@ -5,12 +5,16 @@ interface AuthState {
   token: string | null;
   user: { id: string; username: string } | null;
   isAuthenticated: boolean;
+  loading: boolean;
+  error: string | null;
 }
 
 const initialState: AuthState = {
   token: null,
   user: null,
   isAuthenticated: false,
+  loading: false,
+  error: null
 };
 
 const authSlice = createSlice({
