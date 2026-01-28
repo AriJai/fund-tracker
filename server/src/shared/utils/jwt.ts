@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import { AccessTokenPayload } from "../types/authTypes";
+import { AccessTokenPayload } from "../../modules/auth/auth.types";
 
 /**
  * Handles token authentication.

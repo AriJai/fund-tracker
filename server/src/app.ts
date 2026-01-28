@@ -1,10 +1,10 @@
 import express, { Application, Request, Response } from "express";
-import client from './db';
+import client from './shared/db/db';
 import cors from 'cors';
 export const app: Application = express();
 import cookieParser from 'cookie-parser';
 // Route Imports
-import authRoutes from './routes/authRoutes';
+import authRoutes from './modules/auth/auth.routes';
 
 // Middleware
 app.use(cookieParser());

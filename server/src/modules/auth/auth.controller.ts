@@ -1,9 +1,9 @@
 import bcrypt from 'bcryptjs';
 import { CookieOptions, Request, Response } from 'express';
-import client from '../db';
-import hashPassword from '../utils/hashPassword';
-import { signAccessToken } from '../utils/jwt';
-import { AuthRequest, AuthResponse, UserRow, AuthenticatedRequest } from '../types/authTypes';
+import client from '../../shared/db/db';
+import hashPassword from '../../shared/utils/hashPassword';
+import { signAccessToken } from '../../shared/utils/jwt';
+import { AuthRequest, AuthResponse, UserRow, AuthenticatedRequest } from './auth.types';
 
 /**
  * Handles user registration.

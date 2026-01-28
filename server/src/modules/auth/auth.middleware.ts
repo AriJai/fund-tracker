@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
-import { AuthRequest, AuthenticatedRequest, AccessTokenPayload } from '../types/authTypes';
+import { AuthRequest, AuthenticatedRequest, AccessTokenPayload } from './auth.types';
 
 /**
  * Middleware to validate registration credentials

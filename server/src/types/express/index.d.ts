@@ -1,6 +1,6 @@
 import * as express from 'express';
 import { JwtPayload } from 'jsonwebtoken';
-import { AccessTokenPayload } from '../authTypes';
+import { AccessTokenPayload } from '../../modules/auth/auth.types';
 
 declare global {
   namespace Express {
