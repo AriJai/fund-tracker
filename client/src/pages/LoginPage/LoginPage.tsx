@@ -15,6 +15,7 @@ function LoginPage() {
         username: "",
         password: "",
     });
+    const [error, setError] = useState<string | null>(null);
 
     // Dispatch for store
     const dispatch = useDispatch<AppDispatch>();
@@ -39,14 +40,12 @@ function LoginPage() {
     // Form submission
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        const username = user.username;
-        const password = user.password;
-
+        // ToDo: Update alert() for better user experience
         try {
-            await dispatch(loginUser(username, password));
-            alert('Login successful!');
+            await dispatch(loginUser( user.username, user.password ));
+            navigate('/dashboard')
         } catch (err) {
-            alert('Login failed.');
+            setError('Login failed. Please check your credentials.');
         }
     };
 
@@ -68,11 +67,13 @@ function LoginPage() {
                     placeholder="Password"
                     required
                 />
+                {error && <div className="error-message">{error}</div>}
                 <input
                     type="submit"
                     value="Log In"
                 />
             </form>
+            
             <button onClick={handleHomePageClick}>Go Back</button>
         </div>
     );

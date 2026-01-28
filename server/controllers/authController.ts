@@ -1,8 +1,9 @@
-import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
-import { Request, Response } from 'express';
+import { CookieOptions, Request, Response } from 'express';
 import client from '../db';
 import hashPassword from '../utils/hashPassword';
+import { signAccessToken } from '../utils/jwt';
+import { AuthRequest, AuthResponse, UserRow, AuthenticatedRequest } from '../types/authTypes';
 
 /**
  * Handles user registration.
@@ -12,11 +13,6 @@ import hashPassword from '../utils/hashPassword';
 
 const register = async (req: Request, res: Response): Promise<void> => {
     const { username, password } = req.body;
-    // Check for missing Username and Password
-    if (!username || !password) {
-        res.status(400).json({ message: 'Both Username and password are required' });
-        return;
-    }
 
     try {
         // Check if the username already exists in the database
@@ -55,48 +51,118 @@ const register = async (req: Request, res: Response): Promise<void> => {
  * @param req Request object
  * @param res Response object
  */
-const login = async (req: Request, res: Response): Promise<void> => {
+const login = async (
+    req: Request<{}, {}, AuthRequest>,
+    res: Response<AuthResponse>
+): Promise<void> => {
     const { username, password } = req.body;
-
-    // Check for missing Username and Password
-    if (!username || !password) {
-        res.status(400).json({ message: 'Both Username and password are required' });
-        return;
-    }
 
     try {
         // Find user by username
-        const result = await client.query('SELECT * FROM users WHERE username = $1', 
+        const result = await client.query<UserRow>('SELECT id, username, password FROM users WHERE username = $1',
             [username]
         );
-
+        // Cannot find user
         if (result.rows.length === 0) {
-            res.status(400).json({ message: 'Invalid username' });
+            res.status(400).json({ message: 'Invalid credentials' });
             return;
         }
-
+        // Found user
         const user = result.rows[0];
-
         // Compare the provided password with the stored hash
         const isPasswordValid = await bcrypt.compare(password, user.password);
-
         if (!isPasswordValid) {
-            res.status(400).json({ message: 'Incorrect password' });
+            res.status(400).json({ message: 'Invalid credentials' });
             return;
         }
 
-        // Generate a JWT token
-        const token = jwt.sign(
-            { userId: user.id, username: user.username },
-            process.env.JWT_SECRET as string,
-            { expiresIn: '1h'}
+        // Sign JWT
+        const token = signAccessToken({
+            userId: user.id,
+        });
+
+        // Set cookie
+        const ACCESS_TOKEN_COOKIE_NAME = 'access_token';
+        const ACCESS_TOKEN_EXPIRATION = 60 * 60 * 1000; // 1 hour
+        const cookieOptions: CookieOptions = {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'lax', // 'lax' | 'strict' | 'none'
+            maxAge: ACCESS_TOKEN_EXPIRATION,
+            path: '/'
+        }
+        res.cookie(
+            ACCESS_TOKEN_COOKIE_NAME,
+            token,
+            cookieOptions
         );
 
-        res.status(200).json({ message: 'Login successful', token });
-    } catch (error) {
+        res.status(200).json({
+            message: 'Login successful',
+            user: {
+                id: user.id,
+                username: user.username,
+            }
+        });
+    } catch (error: unknown) {
         console.error(error);
         res.status(500).json({ message: 'Internal Server Error' });
     }
 };
 
-export { register, login };
+/**
+ * Handles user logout.
+ * @param req Request object
+ * @param res Response object
+ */
+const logout = (req: Request, res: Response) => {
+    const ACCESS_TOKEN_COOKIE_NAME = 'access_token';
+    const cookieOptions: CookieOptions = {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'lax', // 'lax' | 'strict' | 'none'
+            path: '/'
+        }
+    res.clearCookie(
+        ACCESS_TOKEN_COOKIE_NAME,
+        cookieOptions,
+    );
+    return res.json({ message: 'Logged out successfully'});
+}
+
+/**
+ * Handles user authentication.
+ * @param req Request object
+ * @param res Response object
+ */
+const getUser = async (req: AuthenticatedRequest, res: Response) => {
+    try {
+        if (!req.user) {
+            return res.status(401).json({ message: 'Not authenticated' });
+        }
+
+        // req.user is set by authenticateJWT
+        const requser = req.user;
+
+        const userId = requser.userId;
+
+        // Fetch user info from database
+        const result = await client.query(
+            'SELECT id, username FROM users WHERE id = $1',
+            [userId]
+        );
+
+        if (result.rows.length === 0) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        const user = result.rows[0];
+        return res.json({ user });
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ message: 'Server error' });
+    }
+};
+
+
+export { register, login, logout, getUser };

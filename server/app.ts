@@ -2,11 +2,18 @@ import express, { Application, Request, Response } from "express";
 import client from './db';
 import cors from 'cors';
 export const app: Application = express();
+import cookieParser from 'cookie-parser';
 // Route Imports
 import authRoutes from './routes/authRoutes';
 
 // Middleware
-app.use(cors({ origin:['http://localhost:5173'] }));
+app.use(cookieParser());
+app.use(
+  cors({
+    origin: ['http://localhost:5173'],
+    credentials: true,
+  })
+);
 app.use(express.json());
 
 // Register Routes
