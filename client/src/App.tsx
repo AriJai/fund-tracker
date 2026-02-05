@@ -11,7 +11,7 @@ import type { AppDispatch } from './store/store';
 import { fetchCurrentuser } from './redux/auth/authActions';
 const RegistrationPage = React.lazy(() => import('./pages/RegistrationPage/RegistrationPage'));
 const LoginPage = React.lazy(() => import('./pages/LoginPage/LoginPage'));
-const DashboardPage = React.lazy(() => import('./pages/DashboardPage'));
+const DashboardPage = React.lazy(() => import('./pages/DashboardPage/DashboardPage'));
 
 
 function App() {
@@ -37,7 +37,6 @@ function App() {
               </PublicRoute>
             }
           />
-          <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegistrationPage />} />
           <Route 
             path='/dashboard'
