@@ -5,6 +5,7 @@ export const app: Application = express();
 import cookieParser from 'cookie-parser';
 // Route Imports
 import authRoutes from './modules/auth/auth.routes';
+import transactionRoutes from './modules/transactions/transactions.routes';
 
 // Middleware
 app.use(cookieParser());
@@ -18,6 +19,7 @@ app.use(express.json());
 
 // Register Routes
 app.use('/api/auth', authRoutes);
+app.use('/api/transactions', transactionRoutes)
 
 // Used for testing: index.test.ts
 app.get("/", (req: Request, res: Response) => {
