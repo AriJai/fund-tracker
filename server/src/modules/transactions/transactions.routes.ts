@@ -1,12 +1,14 @@
 import { Router } from 'express';
 import { validateBalanceParam } from './transactions.middleware';
-import { getBalance } from './transactions.controller';
+import { addTransaction, getBalance } from './transactions.controller';
 import { authenticateJWT } from '../auth/auth.middleware';
 
 
 const router: Router = Router();
 
 // Balance Route
-router.get('/getbalance/:userId', authenticateJWT ,validateBalanceParam, getBalance);
+router.get('/users/:userId/balance', authenticateJWT ,validateBalanceParam, getBalance);
+
+router.post('/', authenticateJWT, addTransaction);
 
 export default router;

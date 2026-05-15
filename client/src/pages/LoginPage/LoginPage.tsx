@@ -6,22 +6,23 @@ import styles from './LoginPage.module.scss';
 import { loginUser } from '../../redux/auth/authActions';
 
 function LoginPage() {
-    // User data from forms
-    type UserFormState = {
-        username: string;
-        password: string;
-    };
+    // Hooks
+    const dispatch = useDispatch<AppDispatch>();
+    const navigate = useNavigate();
+
     const [user, setUser] = useState<UserFormState>({
         username: "",
         password: "",
     });
     const [error, setError] = useState<string | null>(null);
 
-    // Dispatch for store
-    const dispatch = useDispatch<AppDispatch>();
+    // Types
+    type UserFormState = {
+        username: string;
+        password: string;
+    };
 
-    // setup navigation
-    const navigate = useNavigate();
+
     // Navigation to other pages
     const handleHomePageClick = (): void => {
         navigate('/');
@@ -40,7 +41,6 @@ function LoginPage() {
     // Form submission
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        // ToDo: Update alert() for better user experience
         try {
             await dispatch(loginUser( user.username, user.password ));
             navigate('/dashboard')
@@ -57,6 +57,7 @@ function LoginPage() {
                     type="text"
                     onChange={handleChange}
                     name="username"
+                    aria-label='User name'
                     placeholder="Username"
                     required
                 />
@@ -64,6 +65,7 @@ function LoginPage() {
                     type="password"
                     onChange={handleChange}
                     name="password"
+                    aria-label='Password'
                     placeholder="Password"
                     required
                 />

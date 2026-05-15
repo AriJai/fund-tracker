@@ -1,15 +1,27 @@
-export interface Transaction {
-    id: number;
-    creatorUserId: number;
-    targetType: "user" | "team";
-    targetId: number;
+export type TargetType = "user" | "team";
+
+export type TransactionStatus = "pending" | "confirmed" | "rejected";
+
+export interface CreateTransactionBody {
+    target_type: TargetType;
+    target_id: number;
     amount: number;
-    status: "pending" | "confirmed" | "rejected";
-    createdAt: string;
-    confirmedAt?: string;
-    rejectedAt?: string;
     reason?: string;
-    refundOfId?: number;
+}
+
+export interface TransactionRow {
+    id: number;
+    creator_user_id: number;
+    target_type: TargetType;
+    target_id: number;
+    amount: string;
+    status: TransactionStatus;
+    created_at: string;
+    confirmed_at: string | null;
+    rejected_at: string | null;
+    reason: string | null;
+    external_id: string;
+    refund_of_id: number | null;
 }
 
 export interface TransactionBody {
@@ -20,8 +32,6 @@ export interface TransactionBody {
     reason?: string;
     refund_of_id?: number;
 }
-
-
 
 export interface Team {
     id: number;

@@ -1,5 +1,5 @@
 import api from "../../services/axios";
-import type { TransactionResponse } from "./transactionsTypes";
+import type { AddFundsPayload, GetBalanceResponse } from "./transactionsTypes";
 
 
 /**
@@ -8,7 +8,24 @@ import type { TransactionResponse } from "./transactionsTypes";
  */
 export const getBalanceApi = async (
   userId: string
-): Promise<TransactionResponse> => {
-  const response = await api.get<TransactionResponse>(`/transactions/getBalance/${userId}`);
-  return response.data;
+): Promise<GetBalanceResponse> => {
+  try {
+    const response = await api.get<GetBalanceResponse>(`/transactions/users/${userId}/balance`);
+    return response.data;
+  } catch (err) {
+    console.error("API call failed:", err);
+    throw err;
+  }
+};
+
+export const addFundsApi = async (
+  data: AddFundsPayload
+) => {
+  try {
+    const response = await api.post("/transactions", data);
+    return response.data;
+  } catch (err) {
+    console.error("API call failed:", err);
+    throw err;
+  }
 };
